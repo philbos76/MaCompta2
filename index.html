@@ -4,9 +4,22 @@
 <title>Budget et comptes</title>
 <meta name="robots" content="noindex,nofollow">
 <meta name="description" content="Budget personnel : suivi et projection des comptes bancaires">
-<link rel="icon" type="image/png" href="./icone.png">
-<link rel="apple-touch-icon" href="./icone.png">
- <!-- Sécurité : limite les connexions réseau à ce site et à Supabase. Si un export (PDF/Excel) ne fonctionnait plus, supprimez cette balise pour tester. -->
+    <!-- Étape 1 : Icône standard (Navigateurs PC & Mac) -->
+    <link rel="icon" type="image/png" href="icone.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="icone.png" sizes="16x16">
+
+    <!-- Étape 2 : Pour iPhone / iOS (Ajout à l'écran d'accueil) -->
+    <link rel="apple-touch-icon" href="icone.png">
+    <!-- Optionnel : Si vous voulez éviter que l'iPhone ajoute un effet de reflet automatique -->
+    <link rel="apple-touch-icon-precomposed" href="icone.png">
+
+    <!-- Étape 3 : Pour Android / Chrome -->
+    <link rel="shortcut icon" sizes="192x192" href="icone.png">
+
+    <!-- Étape 4 : Pour Windows (Tuiles du menu Démarrer) -->
+    <meta name="msapplication-TileImage" content="icone.png">
+    <meta name="msapplication-TileColor" content="#ffffff"> <!-- Remplacez par la couleur de fond souhaitée en HEX -->
+<!-- Sécurité : limite les connexions réseau à ce site et à Supabase. Si un export (PDF/Excel) ne fonctionnait plus, supprimez cette balise pour tester. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'none'">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%92%B6%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
