@@ -156,7 +156,7 @@ body.out header,body.out nav,body.out main{display:none!important}
 @media(max-width:700px){.tiles{grid-template-columns:repeat(2,1fr);gap:12px}.tile{padding:16px 14px 14px}.tile .ti{width:52px;height:52px;border-radius:17px}.tile .ti svg{width:27px;height:27px}.tile .tt{font-size:17px}.tile .td{font-size:13px}.hero{padding:22px 20px}.hero h1{font-size:29px}.hb{width:100%}.hero .b{flex:1}}
 @media(max-width:480px){nav button{font-size:10px;padding:7px 0 5px}nav button svg{width:21px;height:21px}}
 .brand{cursor:pointer}</style></head><body class="out">
-<header><b class="brand" onclick="go('home')" title="Accueil" role="link" tabindex="0" onkeydown="if(event.key=='Enter')go('home')"><span class="logo"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 3v9h9"/></svg></span><span class="bt">Budget et comptes</span></b>
+<header><b class="brand" data-go="home" title="Accueil" role="link" tabindex="0"><span class="logo"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 3v9h9"/></svg></span><span class="bt">Budget et comptes</span></b>
 <span class="hact"><small id="sy" data-s="w" title="Local">Local</small>
 <button class="b x" onclick="xport()" title="Exporter vers Excel" aria-label="Exporter vers Excel"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg><span class="t">Excel</span></button>
 <button class="b x" onclick="theme()" title="Thème clair / sombre" aria-label="Changer de thème"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
@@ -278,8 +278,9 @@ const put=(t,a,b,v,m)=>{if(t=='R'&&F[a])F[a].r[m]+=v;else if(t=='D'&&F[a])F[a].d
 TX().forEach(x=>{const m=rk(x.d);if(m>=1&&m<=bs)put(x.t,x.a,x.b,+x.v||0,m)});
 S.lines.forEach(l=>{for(let m=bs+1;m<=12;m++)put(l.t,l.a,l.b,+l.m[m-1]||0,m)});
 S.acc.forEach((a,i)=>{const f=F[i];f.b=[];f.e=[];let b=+a.o||0;for(let m=1;m<=12;m++){f.b[m]=b;b=b+f.r[m]-f.d[m]+f.i[m]-f.o[m];f.e[m]=b}});return F}
-function render(){$('#nav').innerHTML=TABS.map(([k,l])=>`<button class="${k==tab?'on':''}" onclick="go('${k}')" aria-label="${l}"><svg viewBox="0 0 24 24">${IC[k]}</svg><span>${l}</span></button>`).join('');const v=$('#v'),ch=LT!==tab;v.classList.toggle('anim',ch);v.innerHTML={home:homeV,proj:pV,suivi:sV,tx:tV,bud:bV,set:rV,help:hV}[tab]();LT=tab;if(ch)countUp()}
-const go=k=>{tab=k;render();scrollTo(0,0)};
+function render(){$('#nav').innerHTML=TABS.map(([k,l])=>`<button class="${k==tab?'on':''}" data-go="${k}" aria-label="${l}"><svg viewBox="0 0 24 24">${IC[k]}</svg><span>${l}</span></button>`).join('');const v=$('#v'),ch=LT!==tab;v.classList.toggle('anim',ch);let html;try{html={home:homeV,proj:pV,suivi:sV,tx:tV,bud:bV,set:rV,help:hV}[tab]()}catch(err){console.error(err);html=`<div class="card"><h3>Affichage impossible</h3><p class="mut">Une erreur est survenue dans cet onglet : ${esc((err&&err.message)||err)}. Vous pouvez changer d'onglet avec le menu.</p></div>`}
+v.innerHTML=html;LT=tab;if(ch){try{countUp()}catch(e){}}}
+const go=k=>{tab=k;render();try{scrollTo(0,0)}catch(e){}};
 /* ---------- Accueil ---------- */
 function homeV(){let n=0,tot=0,vr=0,al=0,sd='';
 try{const F=calc(),FB=calc(0),U=S.acc.map((a,i)=>i).filter(i=>S.acc[i].n);n=U.length;const o=sum(U.map(i=>S.acc[i].o));tot=U.reduce((a,i)=>a+F[i].e[12],0);vr=tot-o;
@@ -293,8 +294,8 @@ T6=[['proj','Projection','Où en seront vos comptes, mois après mois',n?`${n0(t
 ['bud','Budget','Vos lignes prévues, mois par mois',`${nl} ligne${nl>1?'s':''} de budget`,'','linear-gradient(135deg,#d9730d,#f5a524)'],
 ['set','Réglages','Comptes, catégories, sauvegarde',`${n} compte${n>1?'s':''} · ${nc} catégorie${nc>1?'s':''}`,'','linear-gradient(135deg,#3a5673,#6a8cab)'],
 ['help','Aide','Guides, vidéos et export PDF','Pas à pas illustré','','linear-gradient(135deg,#c2255c,#f06595)']];
-return`<div class="hero"><div><small>${dt}</small><h1>${gr}</h1><p>${n?`Vos comptes totalisent <b>${n0(tot)} ${cur}</b> à la fin de l'exercice (${ML(12)}), soit <b>${sg(vr)} ${cur}</b> depuis l'ouverture.`:'Commencez par définir vos comptes dans Réglages.'}</p></div><div class="hb"><button class="b hp" onclick="go('tx')">＋ Nouvelle opération</button><button class="b hgh" onclick="pdf('a')">Rapport PDF complet</button></div></div>
-<h2>Accéder à…</h2><div class="tiles">${T6.map(([k,t,d,m,b,g])=>`<button class="tile" style="--g:${g}" onclick="go('${k}')"><span class="ti"><svg viewBox="0 0 24 24">${IC[k]}</svg></span>${b}<b class="tt">${t}</b><span class="td">${d}</span><span class="tm">${m}</span></button>`).join('')}</div>`}
+return`<div class="hero"><div><small>${dt}</small><h1>${gr}</h1><p>${n?`Vos comptes totalisent <b>${n0(tot)} ${cur}</b> à la fin de l'exercice (${ML(12)}), soit <b>${sg(vr)} ${cur}</b> depuis l'ouverture.`:'Commencez par définir vos comptes dans Réglages.'}</p></div><div class="hb"><button class="b hp" data-go="tx">＋ Nouvelle opération</button><button class="b hgh" onclick="pdf('a')">Rapport PDF complet</button></div></div>
+<h2>Accéder à…</h2><div class="tiles">${T6.map(([k,t,d,m,b,g])=>`<button class="tile" style="--g:${g}" data-go="${k}"><span class="ti"><svg viewBox="0 0 24 24">${IC[k]}</svg></span>${b}<b class="tt">${t}</b><span class="td">${d}</span><span class="tm">${m}</span></button>`).join('')}</div>`}
 /* ---------- Aide ---------- */
 function hV(){const bx=(t,a)=>`<div class="card"><h3>${t}</h3><ul class="hl">${a.map(i=>`<li>${i}</li>`).join('')}</ul></div>`,
 ex=(head,rows)=>`<div class="tw" style="margin:8px 0"><table><thead><tr>${head.map(x=>`<th style="text-align:left">${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(x=>`<td style="text-align:left;white-space:normal">${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
@@ -621,5 +622,9 @@ add('Transactions',[['Date','Libellé','Type','Ligne budgétaire','Compte','Comp
 add('Suivi '+ml[s-1],[['Ligne','Type','Budget mois','Réel mois','Écart mois','Budget cumul','Réel cumul','Écart cumul','Budget annuel'],...[...R,...hb].map(r=>{const a=r.a,e=(b,c)=>r.t=='D'?b-c:c-b;return[r.n,T[r.t],a[0],a[1],e(a[0],a[1]),a[2],a[3],e(a[2],a[3]),a[4]]})]);
 add('Projection',[['Compte',...ml,'Écart vs ouverture'],...S.acc.map((a,i)=>a.n?[a.n,...F[i].e.slice(1).map(v=>Math.round(v*100)/100),Math.round((F[i].e[12]-(+a.o||0))*100)/100]:null).filter(Boolean)]);
 try{const o=X.write(wb,{bookType:'xlsx',type:'array'});const bl=new Blob([o],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),fn='Budget_et_projection_export.xlsx',r=await saveAs(fn,bl,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');if(r=='saved')note('Export enregistré : '+fn,true);else if(r=='fallback'&&!await shareF(fn,bl))aDl(fn,bl)}catch(e){if(!e||e.code!='declined')alert("Export impossible : "+((e&&e.message)||e))}}
+/* navigation : écouteurs délégués (ne dépendent pas des attributs onclick) */
+document.addEventListener('click',e=>{const t=e.target&&e.target.closest?e.target.closest('[data-go]'):null;if(t){e.preventDefault();go(t.dataset.go)}});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'){const t=e.target&&e.target.closest?e.target.closest('.brand[data-go]'):null;if(t)go(t.dataset.go)}});
+window.addEventListener('error',e=>{const m=String(e.message||'');if(!m||/ResizeObserver|Script error/i.test(m))return;try{note('Erreur : '+m)}catch(_){}});
 render();initAuth();
 </script></body></html>
